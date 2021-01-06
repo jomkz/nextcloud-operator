@@ -1,0 +1,8 @@
+domain: nextcloud.com
+layout: go.kubebuilder.io/v3
+projectName: nextcloud-operator
+repo: github.com/jmckind/nextcloud-operator
+version: 3-alpha
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}

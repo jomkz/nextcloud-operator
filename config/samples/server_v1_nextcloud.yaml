@@ -1,0 +1,7 @@
+apiVersion: server.nextcloud.com/v1
+kind: NextCloud
+metadata:
+  name: nextcloud-sample
+spec:
+  # Add fields here
+  foo: bar
