@@ -26,6 +26,7 @@ import (
 	serverv1 "github.com/jmckind/nextcloud-operator/api/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
@@ -45,6 +46,21 @@ func getNextCloudContainerImage() string {
 	img := NextCloudDefaultServerImage
 	tag := NextCloudDefaultServerVersion
 	return combineImageTag(img, tag)
+}
+
+// getNextCloudServerResources will return the container resources for NextCloud.
+func getNextCloudServerResources() corev1.ResourceRequirements {
+	resources := corev1.ResourceRequirements{
+		Limits: corev1.ResourceList{
+			corev1.ResourceCPU:    resource.MustParse(NextCloudDefaultServerResourceLimitCPU),
+			corev1.ResourceMemory: resource.MustParse(NextCloudDefaultServerResourceLimitMemory),
+		},
+		Requests: corev1.ResourceList{
+			corev1.ResourceCPU:    resource.MustParse(NextCloudDefaultServerResourceRequestCPU),
+			corev1.ResourceMemory: resource.MustParse(NextCloudDefaultServerResourceRequestMemory),
+		},
+	}
+	return resources
 }
 
 // newDeployment returns a new Deployment instance for the given ObjectMeta.
@@ -87,6 +103,7 @@ func (r *NextCloudReconciler) reconcileServerDeployment(cr *serverv1.NextCloud) 
 				ContainerPort: 8080,
 			},
 		},
+		Resources: getNextCloudServerResources(),
 		VolumeMounts: []corev1.VolumeMount{
 			{
 				Name:      "nextcloud-config",

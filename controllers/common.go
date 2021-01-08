@@ -32,24 +32,6 @@ const (
 	// NextCloudAppName is the key for the "app name" label
 	NextCloudAppName = "nextcloud"
 
-	// NextCloudKeyAppName is the key for the "app name" label
-	NextCloudKeyAppName = "app.kubernetes.io/name"
-
-	// NextCloudKeyPartOf is the key for the "part-of" label
-	NextCloudKeyPartOf = "app.kubernetes.io/part-of"
-
-	// NextCloudDefaultHTTPPort is the default HTTP listen port for NextCloud server
-	NextCloudDefaultHTTPPort = 8080
-
-	// NextCloudDefaultServerImage is the default container image to use for NextCloud server
-	NextCloudDefaultServerImage = "nextcloud"
-
-	// NextCloudDefaultServerVersion is the default version tag to use for the NextCloud server container image
-	NextCloudDefaultServerVersion = "20.0.4-apache"
-
-	// NextCloudDefaultPortsConfig is the default apache ports configuration
-	NextCloudDefaultPortsConfig = "Listen 8080"
-
 	// NextCloudDefaultApacheConfig is the default apache vhosts configuration
 	NextCloudDefaultApacheConfig = `
 <VirtualHost *:8080>
@@ -57,6 +39,36 @@ const (
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>`
+
+	// NextCloudDefaultHTTPPort is the default HTTP listen port for NextCloud server
+	NextCloudDefaultHTTPPort = 8080
+
+	// NextCloudDefaultPortsConfig is the default apache ports configuration
+	NextCloudDefaultPortsConfig = "Listen 8080"
+
+	// NextCloudDefaultServerImage is the default container image to use for NextCloud server
+	NextCloudDefaultServerImage = "nextcloud"
+
+	// NextCloudDefaultServerVersion is the default version tag to use for the NextCloud server container image
+	NextCloudDefaultServerVersion = "20.0.4-apache"
+
+	// NextCloudDefaultServerResourceLimitCPU is the default CPU limits for NextCloud server
+	NextCloudDefaultServerResourceLimitCPU = "1000m"
+
+	// NextCloudDefaultServerResourceLimitMemory is the default memory limits for NextCloud server
+	NextCloudDefaultServerResourceLimitMemory = "1Gi"
+
+	// NextCloudDefaultServerResourceRequestCPU is the default CPU requests for NextCloud server
+	NextCloudDefaultServerResourceRequestCPU = "250m"
+
+	// NextCloudDefaultServerResourceRequestMemory is the default memory requests for NextCloud server
+	NextCloudDefaultServerResourceRequestMemory = "512Mi"
+
+	// NextCloudKeyAppName is the key for the "app name" label
+	NextCloudKeyAppName = "app.kubernetes.io/name"
+
+	// NextCloudKeyPartOf is the key for the "part-of" label
+	NextCloudKeyPartOf = "app.kubernetes.io/part-of"
 )
 
 // defaultLabels returns the default set of labels for controllers.
