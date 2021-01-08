@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nextcloud-config
+data:
+  ports.conf: |-
+    Listen 8080
+  apache.conf: |-
+    <VirtualHost *:8080>
+            DocumentRoot /usr/src/nextcloud
+
+            ErrorLog ${APACHE_LOG_DIR}/error.log
+            CustomLog ${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>

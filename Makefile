@@ -1,7 +1,18 @@
+# Current Operator name
+OPERATOR_NAME ?= $(shell awk '$$1 == "projectName:" {print $$2}' PROJECT)
+
 # Current Operator version
-VERSION ?= 0.0.1
+VERSION ?= $(shell awk '$$1 == "Version" {gsub(/"/, "", $$3); print $$3}' version/version.go)
+
+# Image repository to use all building/pushing image targets
+IMG_REPO ?= quay.io/jmckind
+
+# Image URL to use all building/pushing image targets
+IMG ?= $(IMG_REPO)/$(OPERATOR_NAME):latest
+
 # Default bundle image tag
-BUNDLE_IMG ?= controller-bundle:$(VERSION)
+BUNDLE_IMG ?= $(IMG_REPO)/$(OPERATOR_NAME)-bundle:$(VERSION)
+
 # Options for 'bundle-build'
 ifneq ($(origin CHANNELS), undefined)
 BUNDLE_CHANNELS := --channels=$(CHANNELS)
@@ -11,8 +22,6 @@ BUNDLE_DEFAULT_CHANNEL := --default-channel=$(DEFAULT_CHANNEL)
 endif
 BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 
-# Image URL to use all building/pushing image targets
-IMG ?= controller:latest
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true,preserveUnknownFields=false"
 
@@ -73,13 +82,13 @@ vet:
 generate: controller-gen
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 
-# Build the docker image
-docker-build: test
-	docker build -t ${IMG} .
+# Build the container image
+img-build: test
+	podman build -t ${IMG} .
 
-# Push the docker image
-docker-push:
-	docker push ${IMG}
+# Push the container image
+img-push:
+	podman push ${IMG}
 
 # Download controller-gen locally if necessary
 CONTROLLER_GEN = $(shell pwd)/bin/controller-gen
@@ -116,4 +125,4 @@ bundle: manifests kustomize
 # Build the bundle image.
 .PHONY: bundle-build
 bundle-build:
-	docker build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
+	podman build -f bundle.Dockerfile -t $(BUNDLE_IMG) .

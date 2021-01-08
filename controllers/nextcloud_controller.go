@@ -22,6 +22,7 @@ import (
 	"context"
 
 	"github.com/go-logr/logr"
+	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -39,21 +40,35 @@ type NextCloudReconciler struct {
 // +kubebuilder:rbac:groups=server.nextcloud.com,resources=nextclouds,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=server.nextcloud.com,resources=nextclouds/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=server.nextcloud.com,resources=nextclouds/finalizers,verbs=update
+// +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=core,resources=configmaps;services,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the NextCloud object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
-//
-// For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.7.0/pkg/reconcile
 func (r *NextCloudReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = r.Log.WithValues("nextcloud", req.NamespacedName)
+	r.Log.Info("Reconcile starting...")
 
-	// your logic here
+	nextcloud := &serverv1.NextCloud{}
+	if err := r.Get(ctx, req.NamespacedName, nextcloud); err != nil {
+		if errors.IsNotFound(err) {
+			// Request object not found, could have been deleted after reconcile request.
+			// Owned objects are automatically garbage collected. For additional cleanup logic use finalizers.
+			// Return and don't requeue
+			return ctrl.Result{}, nil
+		}
+		// Error reading the object - requeue the request.
+		return ctrl.Result{}, err
+	}
 
+	if nextcloud.ObjectMeta.DeletionTimestamp.IsZero() {
+		if err := r.reconcileNextCloudResources(nextcloud); err != nil {
+			// Error reconciling NextCloud sub-resources - requeue the request.
+			return ctrl.Result{}, err
+		}
+	}
+
+	r.Log.Info("Reconcile complete")
 	return ctrl.Result{}, nil
 }
 
@@ -62,4 +77,19 @@ func (r *NextCloudReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&serverv1.NextCloud{}).
 		Complete(r)
+}
+
+// reconcileNextCloudResources will ensure that all resources are reconciled
+// for the given NextCloud instance.
+func (r *NextCloudReconciler) reconcileNextCloudResources(cr *serverv1.NextCloud) error {
+	if err := r.reconcileNextCloudConfigMap(cr); err != nil {
+		return err
+	}
+	if err := r.reconcileServerDeployment(cr); err != nil {
+		return err
+	}
+	if err := r.reconcileNextCloudService(cr); err != nil {
+		return err
+	}
+	return nil
 }

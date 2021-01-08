@@ -22,8 +22,6 @@ spec:
       labels:
         control-plane: controller-manager
     spec:
-      securityContext:
-        runAsUser: 65532
       containers:
       - command:
         - /manager
@@ -47,9 +45,9 @@ spec:
           periodSeconds: 10
         resources:
           limits:
-            cpu: 100m
-            memory: 30Mi
+            cpu: 200m
+            memory: 60Mi
           requests:
-            cpu: 100m
-            memory: 20Mi
+            cpu: 200m
+            memory: 40Mi
       terminationGracePeriodSeconds: 10
