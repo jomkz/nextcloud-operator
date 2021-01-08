@@ -29,7 +29,7 @@ import (
 )
 
 const (
-	// NextCloudKeyAppName is the key for the "app name" label
+	// NextCloudAppName is the key for the "app name" label
 	NextCloudAppName = "nextcloud"
 
 	// NextCloudKeyAppName is the key for the "app name" label
