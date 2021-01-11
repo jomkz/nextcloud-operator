@@ -36,8 +36,8 @@ const (
 	NextCloudDefaultApacheConfig = `
 <VirtualHost *:8080>
 	DocumentRoot /var/www/html
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>`
 
 	// NextCloudDefaultHTTPPort is the default HTTP listen port for NextCloud server
