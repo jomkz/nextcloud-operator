@@ -35,7 +35,7 @@ const (
 	// NextCloudDefaultApacheConfig is the default apache vhosts configuration
 	NextCloudDefaultApacheConfig = `
 <VirtualHost *:8080>
-    DocumentRoot /usr/src/nextcloud
+	DocumentRoot /var/www/html
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>`
