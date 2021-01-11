@@ -111,7 +111,7 @@ func (r *NextCloudReconciler) reconcileServerDeployment(cr *serverv1.NextCloud) 
 				SubPath:   "ports.conf",
 			}, {
 				Name:      "nextcloud-config",
-				MountPath: "/etc/apache/sites-available/000-default.conf",
+				MountPath: "/etc/apache2/sites-available/000-default.conf",
 				SubPath:   "apache.conf",
 			},
 		},
